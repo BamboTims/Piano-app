@@ -1,13 +1,17 @@
+import { useEffect } from "react";
+import { useInstrument } from "../../Instrument/Context";
 import { useAudioContext } from "../AudioContextProvider/useAudioContext";
 import { useSoundFont } from "../../adapters/Soundfont/useSoundfont";
 import { Keyboard } from "./Keyboard";
-import { useMount } from "../../utils/useMount";
 
 export const KeyboardWithInstrument = () => {
   const AudioContext = useAudioContext()!;
-  const { loading, play, stop, load } = useSoundFont({ AudioContext });
+  const { instrument } = useInstrument();
+  const { loading, current, play, stop, load } = useSoundFont({ AudioContext });
 
-  useMount(load);
+  useEffect(() => {
+    if (!loading && instrument !== current) load(instrument);
+  }, [load, loading, current, instrument]);
 
   return <Keyboard loading={loading} play={play} stop={stop} />;
 };
